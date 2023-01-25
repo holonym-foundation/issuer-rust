@@ -1,6 +1,9 @@
 
 use std::env;
 mod issuer;
+pub type Issuer = issuer::Issuer;
+pub type HoloTimestamp = issuer::HoloTimestamp;
+
 fn main() {
     // private key is 32-byte hex
     // let iss = issuer::Issuer::from_privkey("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
@@ -10,6 +13,8 @@ fn main() {
             panic!("HOLONYM_ISSUER_PRIVKEY does not exist. It should be a 32-byte hex string such as 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef but random")
         }
     };
-    let iss = issuer::Issuer::from_privkey(&p);
+    let iss = Issuer::from_privkey(&p);
+    let ts = HoloTimestamp::cur_time();
     print!("issuer: {:?} ", iss.address);
+    print!("current time, {:?}", ts.timestamp)
 }

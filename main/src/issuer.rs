@@ -10,15 +10,19 @@ pub struct Issuer {
 }
 
 pub struct HoloTimestamp {
-    timestamp: Fr
+    pub timestamp: Fr
 }
 
 impl HoloTimestamp {
     pub fn from_timespec(t: Timespec) -> HoloTimestamp {
-        let sec1900 = t.sec - 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
+        let sec1900 = t.sec + 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
         // return Err(String::from("Error parsing time::Timespec object"));
         // Ok(HoloTimestamp { timestamp : Fr::from(sec1900) });
+        // println!("sec1900 {} {}", sec1900, t.sec);
         return HoloTimestamp { timestamp : Fr::from_str(&sec1900.to_string()).unwrap() }
+    }
+    pub fn cur_time() -> HoloTimestamp {
+        return Self::from_timespec(time::get_time());
     }
 }
 
