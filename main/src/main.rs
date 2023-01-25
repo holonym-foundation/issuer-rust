@@ -11,5 +11,5 @@ fn main() {
         }
     };
     let iss = issuer::Issuer::from_privkey(&p);
-    print!("issuer: {:?} ", iss.privkey.scalar_key());
+    print!("issuer: {:?} ", iss.address);
 }
