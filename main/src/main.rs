@@ -14,7 +14,8 @@ fn main() {
         }
     };
     let iss = Issuer::from_privkey(&p);
-    let ts = HoloTimestamp::cur_time();
-    print!("issuer: {:?} ", iss.address);
-    print!("current time, {:?}", ts.timestamp)
+    let sig = iss.issue(["69".to_string(),"69".to_string()])
+    .unwrap();
+    println!("JSON {:?}", serde_json::to_string(&sig).unwrap());
+    
 }
