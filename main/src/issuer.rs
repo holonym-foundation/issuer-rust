@@ -34,6 +34,7 @@ pub struct SerializableCredentials {
 pub struct SignedCredentials {
     credentials: SerializableCredentials,
     leaf: String,
+    pubkey: Point,
     signature: Signature
 }
 
@@ -125,6 +126,7 @@ impl Issuer {
             SignedCredentials {
                 credentials: creds.serializable(),
                 leaf: leaf.to_string(),
+                pubkey: Point { x: self.pubkey_point.x, y: self.pubkey_point.y },
                 signature: signature
             }
         )
