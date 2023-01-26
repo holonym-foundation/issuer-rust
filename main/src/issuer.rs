@@ -1,5 +1,5 @@
 use num_bigint::{BigInt, RandBigInt, Sign, ToBigInt};
-use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh};
+use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh, Signature};
 use rand::{Rng, random}; // 0.6.5
 use ff::{Field, PrimeField};
 use time::Timespec;
@@ -69,6 +69,12 @@ impl Issuer {
             HoloTimestamp::cur_time().timestamp,
             Fr::zero()]
         )
+    }
+
+    pub fn sign_leaf(&self, leaf: Fr) -> Result<Signature, String> {
+        let as_bigint = leaf.to_string().parse::<BigInt>().unwrap();
+        println!("as_bigint {}", as_bigint);
+        return self.privkey.sign(as_bigint);
     }
 }
 
