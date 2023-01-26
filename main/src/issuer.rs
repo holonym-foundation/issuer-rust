@@ -87,9 +87,6 @@ impl Credentials {
 impl HoloTimestamp {
     pub fn from_timespec(t: Timespec) -> HoloTimestamp {
         let sec1900 = t.sec + 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
-        // return Err(String::from("Error parsing time::Timespec object"));
-        // Ok(HoloTimestamp { timestamp : Fr::from(sec1900) });
-        // println!("sec1900 {} {}", sec1900, t.sec);
         return HoloTimestamp { timestamp : Fr::from_str(&sec1900.to_string()).unwrap() }
     }
     pub fn cur_time() -> HoloTimestamp {
@@ -111,30 +108,18 @@ impl Issuer {
             pubkey_point: Point { x: pk.x, y: pk.y},
             address: POSEIDON.hash(vec![pk.x, pk.y]).unwrap()
         };
-        // let sig = sk.sign(69.to_bigint().unwrap()).unwrap();
-        // println!("secret key is {:?} and public key is {:?}", sk.scalar_key(), a);
-        // println!("Signature is R8 : {:?} , S : {:?}", sig.r_b8, sig.s);
     }
 
     pub fn sign_credentials(&self, creds: Credentials) -> Result<SignedCredentials, String> {
         let leaf = creds.to_leaf().unwrap();
-        let leaf_repr = leaf.into_repr();
-        // // let mut buf = Vec::with_capacity(1024).writer();
-        // leaf_repr.write_le(buf).unwrap();
-        // // let bufref = buf.get_ref();
-        // let buf = buf.into_inner();
-        // // let output: Vec<u8> = vec![0; 4];
-        // // let serialized = hex::encode(output.clone());
-
-        // Remove 0x prefix
-        let leaf_str = leaf_repr.to_string();
+        // Convert Fr to BigInt. TODO: find more efficient way of converting the Fr to a BigInt
+        // Convert to chars and remove 0x prefix
+        let leaf_str = leaf.into_repr().to_string();
         let mut as_chars = leaf_str.chars();
         as_chars.next();
         as_chars.next();
-        println!("as str {:?} {}", leaf.to_string(), as_chars.as_str());
-        // println!("asdf {:?} {}", leaf.to_string(), BigInt::from_bytes_le(Sign::Plus, &buf) );
+        // Now, convert as_chars to BigInt
         let as_bigint = BigInt::from_str_radix(as_chars.as_str(), 16).unwrap();
-        // println!("as_bigint {}", as_bigint);
         let signature = self.privkey.sign(as_bigint).unwrap();
         Ok(
             SignedCredentials {
