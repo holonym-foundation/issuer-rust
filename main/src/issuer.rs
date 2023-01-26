@@ -66,6 +66,7 @@ impl Issuer {
             secret_fr, 
             custom_fields[0], 
             custom_fields[1], 
+            HoloTimestamp::cur_time().timestamp,
             Fr::zero()]
         )
     }
