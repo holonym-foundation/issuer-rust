@@ -12,3 +12,4 @@ num-bigint = { version = "0.4", features = ["rand"]}
 hex = "0.4"
 time = "0.1"
 rand = "0.8.4"
+serde = { version = "1.0.152", features = ["derive"] }
