@@ -1,5 +1,6 @@
 use num_bigint::{BigInt, RandBigInt, Sign, ToBigInt};
-use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey};
+use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh};
+use rand::{Rng, random}; // 0.6.5
 use ff::PrimeField;
 use time::Timespec;
 extern crate time;
@@ -54,7 +55,12 @@ impl Issuer {
 
     // Returns poseidon([issuer address, random secret, custom_fields[0], custom_fields[1], current timestamp as days since 1900, scope (never/seldom used; set to 0 by default)])
     pub fn create_leaf(&self, custom_fields: &[Fr; 2]) -> Fr {
-        POSEIDON.hash(vec![self.address]).unwrap()
+        let random_bytes = rand::thread_rng().gen::<[u8; 32]>();
+        let secret_bytes = blh(&random_bytes);
+        let secret_fr = Fr::from_str(
+            &hex::encode(secret_bytes)
+        ).unwrap();
+        POSEIDON.hash(vec![self.address, secret_fr]).unwrap()
     }
 }
 

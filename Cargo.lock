@@ -384,6 +384,7 @@ dependencies = [
  "ff_ce",
  "hex",
  "num-bigint 0.4.3",
+ "rand 0.8.5",
  "time",
 ]
 

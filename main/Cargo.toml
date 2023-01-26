@@ -11,3 +11,4 @@ babyjubjub-rs = { version = "0.0.10", path = "../babyjubjub-rs", default-feature
 num-bigint = { version = "0.4", features = ["rand"]}
 hex = "0.4"
 time = "0.1"
+rand = "0.8.4"
