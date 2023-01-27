@@ -55,6 +55,6 @@ fn main() {
     let iss = Issuer::from_privkey(&p);
     let sig = iss.issue([field1.to_string(), field2.to_string()])
     .unwrap();
-    println!("JSON {:?}", serde_json::to_string(&sig).unwrap());
+    println!("{:?}", serde_json::to_string(&sig).unwrap());
     
 }

@@ -46,7 +46,6 @@ impl Credentials {
     pub fn from_fields(address: Fr, custom_fields: [Fr; 2]) -> Result<Credentials, String> {
         let random_bytes = rand::thread_rng().gen::<[u8; 32]>();
         let secret_bytes = blh(&random_bytes);
-        println!("secret bytes {:?} |||||||| qwerwqre ||||| {}", secret_bytes,  BigInt::from_bytes_le(Sign::Plus, &secret_bytes).to_string().as_str());
 
         let secret_fr = Fr::from_str(
             BigInt::from_bytes_le(Sign::Plus, &secret_bytes).to_string().as_str()
