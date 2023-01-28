@@ -5,8 +5,11 @@ use rand::{Rng};
 use serde::{Serialize};
 use ff::{Field, PrimeField};
 use time::Timespec;
-
+#[cfg(target_arch = "wasm32")]
+use js_sys::Date;
+#[cfg(not(target_arch = "wasm32"))]
 extern crate time;
+
 pub struct Issuer {
     pub privkey: PrivateKey,
     pub pubkey_point: Point,
@@ -83,12 +86,23 @@ impl Credentials {
 }
 
 impl HoloTimestamp {
-    pub fn from_timespec(t: Timespec) -> HoloTimestamp {
-        let sec1900 = t.sec + 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
-        return HoloTimestamp { timestamp : Fr::from_str(&sec1900.to_string()).unwrap() }
+    // pub fn from_timespec(t: Timespec) -> HoloTimestamp {
+    //     let sec1900 = t.sec + 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
+    //     return HoloTimestamp { timestamp : Fr::from_str(&sec1900.to_string()).unwrap() }
+    // }
+
+    pub fn from_timestamp_sec(timestamp_in_seconds: i64) -> HoloTimestamp {
+        let adjusted = timestamp_in_seconds + 2208988800; // 2208988800000 is 70 year offset; Unix timestamps below 1970 are negative and we want to allow from 1900
+        HoloTimestamp { timestamp: Fr::from_str(&adjusted.to_string()).unwrap() }
     }
+
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn cur_time() -> HoloTimestamp {
-        return Self::from_timespec(time::get_time());
+        return Self::from_timestamp_sec(time::get_time().sec);
+    }
+    #[cfg(target_arch = "wasm32")]
+    pub fn cur_time() -> HoloTimestamp {
+        return Self::from_timestamp_sec((Date::now() as i64) / 1000);
     }
 }
 

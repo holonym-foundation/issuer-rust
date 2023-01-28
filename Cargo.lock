@@ -256,6 +256,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -514,8 +524,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c05aeb6a22b8f62540c194aac980f2115af067bfe15a0734d7277a768d396b31"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -528,7 +540,12 @@ checksum = "eabb4a44450da02c90444cf74558da904edde8fb4e9035a9a6a4e15445af0bd7"
 name = "hello-wasm"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
+ "getrandom",
  "issuer",
+ "js-sys",
+ "serde",
+ "serde_json",
  "wasm-bindgen",
 ]
 
@@ -575,6 +592,7 @@ dependencies = [
  "clap",
  "ff_ce",
  "hex",
+ "js-sys",
  "num-bigint 0.4.3",
  "num-traits",
  "rand 0.8.5",
