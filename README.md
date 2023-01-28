@@ -1,4 +1,5 @@
 # Issuer
+
 ## About
 This rust script lets you issue credentials to Holonym users. Credentials come with mandatory fields that this takes care:
 `issuer_address`, `secret`, `iat`, and `scope`
@@ -6,6 +7,8 @@ This rust script lets you issue credentials to Holonym users. Credentials come w
 
 The other two fields you supply to this. They can be custom, e.g. a user's name, date of birth or phone number. You often need to give a user more than just two credentials. Let's say you want to give them `name`, `birthday`, `country`, and `state`. You can have one (or more) of these fields be a hash of those items. It is up to you to name the fields *outside* of this format. This is serialized, so will ignore all field names; it will just call them `field1` and `field2`. In your schema, you can make `field1` always correspond to `name`, for example, and `field2` always correspond to a `hash(phone_number, birthday)`. 
 
+## Installation
+`git clone https://github.com/holonym-foundation/issuer-rust.git --recurse-submodules --remote-submodules`
 ## How to Use
 run the script with private key as a 32-bit hex string in the `HOLONYM_ISSUER_PRIVKEY` environment variable. Give the two custom fields as `--field1` and `--field2` or `-1` and `-2` in short form. It will return a JSON object with credentials, their corresponding leaf, your issuer's public key, and your issuer's signature of the leaf. 
 
