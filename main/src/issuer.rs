@@ -1,12 +1,11 @@
-use num_bigint::{BigInt, RandBigInt, Sign, ToBigInt};
+use num_bigint::{BigInt};
 use num_traits::Num;
 use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh, Signature};
-use rand::{Rng, random}; // 0.6.5
-use serde::{Serialize, ser::SerializeSeq};
-use ff::{Field, PrimeField, PrimeFieldRepr};
+use rand::{Rng}; 
+use serde::{Serialize};
+use ff::{Field, PrimeField};
 use time::Timespec;
-use std::io::{self, Read, Write};
-use bytes::BufMut;
+use wasm_bindgen::prelude::*;
 
 extern crate time;
 pub struct Issuer {
@@ -130,7 +129,7 @@ impl Issuer {
             }
         )
     }
-
+    
     // creates credentials from custom fields, and returns credentials + leaf + signature
     pub fn issue(&self, custom_fields: [String; 2]) -> Result<SignedCredentials, String> {
         let cf = [Fr::from_str(&custom_fields[0]).unwrap(), Fr::from_str(&custom_fields[1]).unwrap()];
