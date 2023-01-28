@@ -10,14 +10,3 @@ pub fn issue(private_key: String, field1: String, field2: String) -> String {
     let sig = iss.issue(["12345678".to_string(), "23456789".to_string()]).unwrap();
     serde_json::to_string(&sig).unwrap()
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn it_works() {
-//         // let result = add(2, 2);
-//         // assert_eq!(result, 4);
-//     }
-// }
