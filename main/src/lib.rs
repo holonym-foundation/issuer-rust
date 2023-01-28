@@ -1,11 +1,10 @@
-use num_bigint::{BigInt};
+use num_bigint::{BigInt,Sign};
 use num_traits::Num;
 use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh, Signature};
 use rand::{Rng}; 
 use serde::{Serialize};
 use ff::{Field, PrimeField};
 use time::Timespec;
-use wasm_bindgen::prelude::*;
 
 extern crate time;
 pub struct Issuer {

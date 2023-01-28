@@ -1,10 +1,7 @@
 
 use clap::{Arg, App};
 use std::env;
-mod issuer;
-pub type Issuer = issuer::Issuer;
-pub type HoloTimestamp = issuer::HoloTimestamp;
-
+use issuer::Issuer;
 fn main() {
     // private key is 32-byte hex
     // let iss = issuer::Issuer::from_privkey("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
