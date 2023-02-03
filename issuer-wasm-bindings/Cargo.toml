@@ -1,11 +1,9 @@
 [package]
-name = "hello-wasm"
+name = "holonym-wasm-issuer"
 version = "0.1.0"
-authors = ["Your Name <you@example.com>"]
-description = "A sample project with wasm-pack"
-license = "MIT/Apache-2.0"
-repository = "https://github.com/yourgithubusername/hello-wasm"
-edition = "2018"
+authors = ["Nanak Nihal Khalsa <nanak@holonym.id>"]
+description = "WASM bindings to run a Holonym issuer"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
