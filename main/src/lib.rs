@@ -44,16 +44,10 @@ pub struct HoloTimestamp {
 }
 
 impl Credentials {
-    pub fn from_fields(address: Fr, custom_fields: [Fr; 2]) -> Result<Credentials, String> {
-        let random_bytes = rand::thread_rng().gen::<[u8; 32]>();
-        let secret_bytes = blh(&random_bytes);
-
-        let secret_fr = Fr::from_str(
-            BigInt::from_bytes_le(Sign::Plus, &secret_bytes).to_string().as_str()
-        ).unwrap();
+    pub fn from_fields(address: Fr, issuance_nullifier: String, custom_fields: [Fr; 2]) -> Result<Credentials, String> {
         let creds = Credentials {
             address: address,
-            secret: secret_fr,
+            secret: Fr::from_str(&issuance_nullifier).unwrap(),
             custom_fields: custom_fields,
             iat : HoloTimestamp::cur_time().timestamp,
             scope: Fr::zero()
@@ -144,9 +138,9 @@ impl Issuer {
     }
     
     // creates credentials from custom fields, and returns credentials + leaf + signature
-    pub fn issue(&self, custom_fields: [String; 2]) -> Result<SignedCredentials, String> {
+    pub fn issue(&self, issuance_nullifier: String, custom_fields: [String; 2]) -> Result<SignedCredentials, String> {
         let cf = [Fr::from_str(&custom_fields[0]).unwrap(), Fr::from_str(&custom_fields[1]).unwrap()];
-        let c = Credentials::from_fields(self.address, cf).unwrap();
+        let c = Credentials::from_fields(self.address, issuance_nullifier, cf).unwrap();
         self.sign_credentials(c)
     }
 }
