@@ -1,6 +1,6 @@
 use num_bigint::{BigInt,Sign};
 use num_traits::Num;
-use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh, Signature};
+use babyjubjub_rs::{POSEIDON, Fr, Point, PrivateKey, blh, Signature, ToDecimalString};
 use rand::{Rng}; 
 use serde::{Serialize};
 use ff::{Field, PrimeField};
@@ -17,7 +17,7 @@ pub struct Issuer {
 }
 pub struct Credentials {
     pub address: Fr,
-    pub secret: Fr,
+    pub isusance_nullifier: Fr,
     pub custom_fields: [Fr; 2],
     pub iat: Fr, // Timestamp issued at, offset to 1900 instead of standard unix 1970
     pub scope: Fr // Usually zero
@@ -25,18 +25,30 @@ pub struct Credentials {
 #[derive(Serialize)]
 pub struct SerializableCredentials {
     pub address: String,
-    pub secret: String,
+    pub isusance_nullifier: String,
     pub custom_fields: [String; 2],
     pub iat: String,
-    pub scope: String
+    pub scope: String,
+    // /// The fields of credentials in the order that they have ben signed
+    // pub order_of_preimage: [String; 6]
+
 }
 
+#[derive(Serialize)]
+pub struct SerializablePoint {
+    x: String,
+    y: String
+}
+impl From<Point> for SerializablePoint {
+    fn from(value: Point) -> Self { Self { x: value.x.to_dec_string(), y: value.y.to_dec_string() } }
+}
 #[derive(Serialize)]
 pub struct SignedCredentials {
     credentials: SerializableCredentials,
     leaf: String,
-    pubkey: Point,
-    signature: Signature
+    pubkey: SerializablePoint,
+    signature_r8: SerializablePoint,
+    signature_s: String
 }
 
 pub struct HoloTimestamp {
@@ -47,7 +59,7 @@ impl Credentials {
     pub fn from_fields(address: Fr, issuance_nullifier: String, custom_fields: [Fr; 2]) -> Result<Credentials, String> {
         let creds = Credentials {
             address: address,
-            secret: Fr::from_str(&issuance_nullifier).unwrap(),
+            isusance_nullifier: Fr::from_str(&issuance_nullifier).unwrap(),
             custom_fields: custom_fields,
             iat : HoloTimestamp::cur_time().timestamp,
             scope: Fr::zero()
@@ -56,12 +68,20 @@ impl Credentials {
     }
 
     pub fn serializable(&self) -> SerializableCredentials {
+        let address = self.address.to_dec_string();
+        let isusance_nullifier = self.isusance_nullifier.to_dec_string();
+        let custom_fields = [self.custom_fields[0].to_dec_string(), self.custom_fields[1].to_dec_string()];
+        let iat = self.iat.to_dec_string();
+        let scope = self.scope.to_dec_string();
+        // let order_of_preimage = [address, isusance_nullifier, custom_fields[0], custom_fields[1], iat, scope].iter().map(|x|x.clone()).collect();
+
         return SerializableCredentials {
-            address : self.address.to_string(),
-            secret : self.secret.to_string(),
-            custom_fields : [self.custom_fields[0].to_string(), self.custom_fields[1].to_string()],
-            iat : self.iat.to_string(),
-            scope : self.scope.to_string(),
+            address,
+            isusance_nullifier,
+            custom_fields,
+            iat,
+            scope,
+            // order_of_preimage,
         }
        
     }
@@ -70,7 +90,7 @@ impl Credentials {
     pub fn to_leaf(&self) -> Result<Fr, String> {
         POSEIDON.hash(vec![
             self.address,
-            self.secret, 
+            self.isusance_nullifier, 
             self.custom_fields[0], 
             self.custom_fields[1], 
             self.iat,
@@ -106,9 +126,7 @@ impl Issuer {
             hex::decode(privkey)
             .unwrap(),
         ).unwrap();
-
         let pk = prv.public();
-        
         return Issuer {
             privkey: prv,
             pubkey_point: Point { x: pk.x, y: pk.y},
@@ -131,9 +149,10 @@ impl Issuer {
             SignedCredentials {
                 credentials: creds.serializable(),
                 leaf: leaf.to_string(),
-                pubkey: Point { x: self.pubkey_point.x, y: self.pubkey_point.y },
-                signature: signature
-            }
+                pubkey: self.pubkey_point.clone().into(),
+                signature_r8: signature.r_b8.into(),
+                signature_s: signature.s.to_string()
+            } 
         )
     }
     
@@ -145,3 +164,13 @@ impl Issuer {
     }
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn from_privkey() {
+        let prv = "a2aa2ffcbf908eba5f613a481906c5d4ec29d31ee2df20ef176e6de3d5bbca4c";//.to_string();
+        Issuer::from_privkey(prv);
+        // , "123", "456", "789");
+    }
+}
